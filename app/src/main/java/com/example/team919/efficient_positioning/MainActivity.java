@@ -3,6 +3,10 @@ package com.example.team919.efficient_positioning;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.location.LocationProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v4.app.ActivityCompat;
@@ -17,6 +21,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -33,11 +38,13 @@ public class MainActivity extends AppCompatActivity {
     private LocationManager locationManager;
     private String locationProvider;
     final Context context = this;
+    Location collectedLocation;
 
     long minTime = 0;
-    float minDistance = 0;
+    double minDistance = 0.0;
     double meterProSekunde = 0.0;
 
+    EditText editName;
     EditText editDistanz;
     EditText editMinZeit;
     EditText editMS;
@@ -47,10 +54,10 @@ public class MainActivity extends AppCompatActivity {
     RadioButton radioMS;
     RadioButton radioStill;
 
-    HttpRequest httpRequest = new HttpRequest();
-    JSONObject jsonObject = new JSONObject();
-    JSONArray jsonArray = new JSONArray();
-
+    SensorManager sensorManager;
+    float accelX = 0;
+    float accelY = 0;
+    float accelZ = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        editName = findViewById(R.id.editName);
         editDistanz  = findViewById(R.id.editDistanz);
         editMinZeit  = findViewById(R.id.editMinZeit);
         editMS =findViewById(R.id.editMS);
@@ -76,6 +84,31 @@ public class MainActivity extends AppCompatActivity {
         locationListener = getLocation();
         locationProvider = LocationManager.GPS_PROVIDER;
 
+
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        SensorEventListener sensorEventListener = new SensorEventListener() {
+            @Override
+            public void onSensorChanged(SensorEvent event) {
+                switch (event.sensor.getType()){
+                    case Sensor.TYPE_ACCELEROMETER_UNCALIBRATED:
+                        //editName.setText("X: " + String.valueOf(event.values[0]) + " Y: " + String.valueOf(event.values[1]) +" Z: " + String.valueOf(event.values[2]));
+                        Log.d("gdsfzau", "X: " + String.valueOf(event.values[0]));
+                        Log.d("gdsfzau", "Y: " + String.valueOf(event.values[1]));
+                        Log.d("gdsfzau", "Z: " + String.valueOf(event.values[2]));
+                        accelX = event.values[0];
+                        accelY = event.values[1];
+                        accelZ = event.values[2];
+
+                }
+            }
+
+            @Override
+            public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+            }
+        };
+        sensorManager.registerListener(sensorEventListener,sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER_UNCALIBRATED),SensorManager.SENSOR_DELAY_NORMAL);
+
         //Distanz einstellen ---------------------------------------------------------------------
         editDistanz.addTextChangedListener(new TextWatcher() {
             @Override
@@ -90,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                minDistance = Float.parseFloat(editDistanz.getText().toString());
+                minDistance = Double.parseDouble(editDistanz.getText().toString());
             }
         });
 
@@ -109,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                minDistance = Float.parseFloat(editMinZeit.getText().toString());
+                minTime = Long.parseLong(editMinZeit.getText().toString());
             }
         });
 
@@ -127,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                minDistance = Float.parseFloat(editMS.getText().toString());
+                meterProSekunde = Double.parseDouble(editMS.getText().toString());
             }
         });
 
@@ -135,18 +168,18 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch(checkedId){
-                    case R.id.radioDistanz:
-                        Toast.makeText(context, "Hallo Distanz", Toast.LENGTH_SHORT).show();
-                        doHttpRequest(55.213321, 77.2432, 23424, 0, "testtesttestxd");
-                        break;
-
                     case R.id.radioMinZeit:
                         Toast.makeText(context, "", Toast.LENGTH_SHORT).show();
-
+                        setLocationUpdatesTime(minTime);
+                        break;
+                    case R.id.radioDistanz:
+                        Toast.makeText(context, "Hallo Distanz", Toast.LENGTH_SHORT).show();
+                        setLocationUpdatesTime(0);
                         break;
 
                     case R.id.radioMS:
-
+                        minTime = (long)(minDistance/meterProSekunde);
+                        setLocationUpdatesTime(minTime*1000);
                         Toast.makeText(context, editMinZeit.getText(), Toast.LENGTH_SHORT).show();
                         break;
 
@@ -158,9 +191,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
-
-
-
 
     void setLocationUpdatesTime(long minTime){
         locationManager.removeUpdates(locationListener);
@@ -178,6 +208,25 @@ public class MainActivity extends AppCompatActivity {
         return new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
+
+                //1.a periodically
+                if (radioMinZeit.isChecked()) doHttpRequest(location.getLongitude(), location.getLatitude(), location.getTime(), 0, editName.getText().toString());
+
+
+                //1.b distance_based
+                if (collectedLocation == null && radioDistanz.isChecked()){
+                    collectedLocation = location;
+                    doHttpRequest(collectedLocation.getLongitude(), collectedLocation.getLatitude(), collectedLocation.getTime(), 1, editName.getText().toString());
+                }
+                if (radioDistanz.isChecked() && distanceBetweenPoints(collectedLocation.getLatitude(), collectedLocation.getLongitude(), location.getLatitude(), location.getLongitude()) > minDistance){
+                    //Log.d("gdsfzau", "next");
+                    collectedLocation = location;
+                    doHttpRequest(collectedLocation.getLongitude(), collectedLocation.getLatitude(), collectedLocation.getTime(), 1, editName.getText().toString());
+                }
+
+                //1.c geschqwindigkeit
+                if (radioMS.isChecked())doHttpRequest(location.getLongitude(), location.getLatitude(), location.getTime(), 2, editName.getText().toString());
+
 
             }
 
@@ -210,18 +259,34 @@ public class MainActivity extends AppCompatActivity {
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, callback);
     }
 
-    private void doHttpRequest(double latitude, double longitude, int measured_at, int strategy, String name){
+    public void doHttpRequest(double longitude, double latitude, long measured_at, int strategy, String name){
         try {
-            jsonObject.put("latitude",  latitude);
-            jsonObject.put("longitude",  longitude);
-            jsonObject.put("measured_at",  measured_at);
-            jsonObject.put("strategy",  strategy);
-            jsonObject.put("name",  name);
+            JSONObject location = new JSONObject();
+            location.put("longitude", longitude);
+            location.put("latitude", latitude);
+            location.put("measured_at", measured_at);
+            location.put("strategy", strategy);
+            location.put("name", name);
 
+            JSONObject body = new JSONObject();
+            body.put("location", location);
+
+            new PushLocation().execute(body.toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        jsonArray.put(jsonObject);
-        httpRequest.doInBackground(jsonArray.toString());
     }
+
+    public double distanceBetweenPoints(double startlat,double startlong,double entlat,double entlng) {
+        Location locA = new Location("Point A");
+        locA.setLatitude(startlat);
+        locA.setLongitude(startlong);
+        Location locB = new Location("Point B");
+        locB.setLatitude(entlat);
+        locB.setLongitude(entlng);
+
+        double distance = (double) Math.round(locA.distanceTo(locB));
+        return distance;
+    }
+
 }
