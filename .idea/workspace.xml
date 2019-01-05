@@ -10,7 +10,7 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
   <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/app/src/main/java/com/example/team919/efficient_positioning/MainActivity.java" line="212" />
+    <bookmark url="file://$PROJECT_DIR$/app/src/main/java/com/example/team919/efficient_positioning/MainActivity.java" line="217" />
   </component>
   <component name="CMakeSettings">
     <configurations>
@@ -19,10 +19,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2468905f-dc90-4fed-95ef-a2ad48057188" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/team919/efficient_positioning/PushLocation.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/team919/efficient_positioning/HttpRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/team919/efficient_positioning/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/team919/efficient_positioning/MainActivity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" afterDir="false" />
     </list>
@@ -50,11 +48,11 @@
       <file leaf-file-name="MainActivity.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/team919/efficient_positioning/MainActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="340">
-              <caret line="109" column="128" selection-start-line="109" selection-start-column="128" selection-end-line="109" selection-end-column="128" />
+            <state relative-caret-position="595">
+              <caret line="91" column="51" lean-forward="true" selection-start-line="91" selection-start-column="51" selection-end-line="91" selection-end-column="51" />
               <folding>
-                <element signature="e#4892#5918#0" expanded="true" />
-                <element signature="e#5917#5918#0" expanded="true" />
+                <element signature="e#6021#7047#0" expanded="true" />
+                <element signature="e#7046#7047#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -63,7 +61,9 @@
       <file leaf-file-name="activity_main.xml" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml">
           <provider editor-type-id="text-editor">
-            <state />
+            <state relative-caret-position="119">
+              <caret line="7" selection-start-line="7" selection-end-line="7" />
+            </state>
           </provider>
           <provider selected="true" editor-type-id="android-designer2">
             <state />
@@ -2368,13 +2368,13 @@
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/team919/efficient_positioning/PushLocation.java" />
         <option value="$PROJECT_DIR$/app/build.gradle" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/team919/efficient_positioning/MainActivity.java" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-122" />
-    <option name="y" value="-11" />
+    <option name="x" value="-9" />
     <option name="width" value="1936" />
     <option name="height" value="1056" />
   </component>
@@ -2571,6 +2571,7 @@
       <window_info id="Build Variants" side_tool="true" />
       <window_info anchor="right" id="Capture Analysis" />
       <window_info anchor="bottom" id="Event Log" side_tool="true" />
+      <window_info anchor="right" id="Preview" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.32897604" />
       <window_info anchor="bottom" id="Version Control" />
       <window_info anchor="bottom" id="Terminal" />
@@ -2644,14 +2645,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state />
-      </provider>
-      <provider editor-type-id="android-manifest">
-        <state />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/build.gradle">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="323">
@@ -2671,9 +2664,28 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Android/Sdk/sources/android-28/android/os/Handler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="197">
+          <caret line="104" selection-start-line="104" selection-end-line="104" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="18" lean-forward="true" selection-start-line="18" selection-end-line="18" />
+        </state>
+      </provider>
+      <provider editor-type-id="android-manifest">
+        <state />
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml">
       <provider editor-type-id="text-editor">
-        <state />
+        <state relative-caret-position="119">
+          <caret line="7" selection-start-line="7" selection-end-line="7" />
+        </state>
       </provider>
       <provider selected="true" editor-type-id="android-designer2">
         <state />
@@ -2681,11 +2693,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/team919/efficient_positioning/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="109" column="128" selection-start-line="109" selection-start-column="128" selection-end-line="109" selection-end-column="128" />
+        <state relative-caret-position="595">
+          <caret line="91" column="51" lean-forward="true" selection-start-line="91" selection-start-column="51" selection-end-line="91" selection-end-column="51" />
           <folding>
-            <element signature="e#4892#5918#0" expanded="true" />
-            <element signature="e#5917#5918#0" expanded="true" />
+            <element signature="e#6021#7047#0" expanded="true" />
+            <element signature="e#7046#7047#0" expanded="true" />
           </folding>
         </state>
       </provider>

@@ -55,9 +55,8 @@ public class MainActivity extends AppCompatActivity {
     RadioButton radioStill;
 
     SensorManager sensorManager;
-    float accelX = 0;
-    float accelY = 0;
-    float accelZ = 0;
+    boolean flag = true;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,14 +89,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSensorChanged(SensorEvent event) {
                 switch (event.sensor.getType()){
-                    case Sensor.TYPE_ACCELEROMETER_UNCALIBRATED:
-                        //editName.setText("X: " + String.valueOf(event.values[0]) + " Y: " + String.valueOf(event.values[1]) +" Z: " + String.valueOf(event.values[2]));
-                        Log.d("gdsfzau", "X: " + String.valueOf(event.values[0]));
-                        Log.d("gdsfzau", "Y: " + String.valueOf(event.values[1]));
-                        Log.d("gdsfzau", "Z: " + String.valueOf(event.values[2]));
-                        accelX = event.values[0];
-                        accelY = event.values[1];
-                        accelZ = event.values[2];
+                    case Sensor.TYPE_ACCELEROMETER:
+
+                        if (radioStill.isChecked() && Math.abs(event.values[0]) < 1 && Math.abs(event.values[1]) < 1 && Math.abs(event.values[2]) > 8 && flag == true){
+                            locationManager.removeUpdates(locationListener);
+                            flag = false;
+                        }else if(radioStill.isChecked() && Math.abs(event.values[0]) > 1 && Math.abs(event.values[1]) > 1 && Math.abs(event.values[2]) < 8 && flag == false){
+                            Log.d("gdsfzau", String.valueOf(minTime));
+                            setLocationUpdatesTime(minTime*1000);
+                            flag = true;
+                        }
 
                 }
             }
@@ -107,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         };
-        sensorManager.registerListener(sensorEventListener,sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER_UNCALIBRATED),SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(sensorEventListener,sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_NORMAL);
 
         //Distanz einstellen ---------------------------------------------------------------------
         editDistanz.addTextChangedListener(new TextWatcher() {
@@ -184,6 +185,10 @@ public class MainActivity extends AppCompatActivity {
                         break;
 
                     case R.id.radioStill:
+                        minTime = (long)(minDistance/meterProSekunde);
+                        Log.d("gdsfzau", String.valueOf(minTime));
+                        setLocationUpdatesTime(minTime*1000);
+                        Toast.makeText(context, editMinZeit.getText(), Toast.LENGTH_SHORT).show();
                         break;
 
                 }
@@ -226,6 +231,9 @@ public class MainActivity extends AppCompatActivity {
 
                 //1.c geschqwindigkeit
                 if (radioMS.isChecked())doHttpRequest(location.getLongitude(), location.getLatitude(), location.getTime(), 2, editName.getText().toString());
+
+                //1.d still
+                if (radioStill.isChecked())doHttpRequest(location.getLongitude(), location.getLatitude(), location.getTime(), 3, editName.getText().toString());
 
 
             }
