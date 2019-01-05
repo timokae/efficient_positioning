@@ -22,6 +22,10 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class MainActivity extends AppCompatActivity {
     private static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 0;
 
@@ -42,6 +46,10 @@ public class MainActivity extends AppCompatActivity {
     RadioButton radioMinZeit;
     RadioButton radioMS;
     RadioButton radioStill;
+
+    HttpRequest httpRequest = new HttpRequest();
+    JSONObject jsonObject = new JSONObject();
+    JSONArray jsonArray = new JSONArray();
 
 
     @Override
@@ -129,6 +137,7 @@ public class MainActivity extends AppCompatActivity {
                 switch(checkedId){
                     case R.id.radioDistanz:
                         Toast.makeText(context, "Hallo Distanz", Toast.LENGTH_SHORT).show();
+                        doHttpRequest(55.213321, 77.2432, 23424, 0, "testtesttestxd");
                         break;
 
                     case R.id.radioMinZeit:
@@ -201,4 +210,18 @@ public class MainActivity extends AppCompatActivity {
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, callback);
     }
 
+    private void doHttpRequest(double latitude, double longitude, int measured_at, int strategy, String name){
+        try {
+            jsonObject.put("latitude",  latitude);
+            jsonObject.put("longitude",  longitude);
+            jsonObject.put("measured_at",  measured_at);
+            jsonObject.put("strategy",  strategy);
+            jsonObject.put("name",  name);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        jsonArray.put(jsonObject);
+        httpRequest.doInBackground(jsonArray.toString());
+    }
 }
