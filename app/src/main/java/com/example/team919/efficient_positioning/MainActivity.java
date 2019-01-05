@@ -22,6 +22,13 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.concurrent.ExecutionException;
+
 public class MainActivity extends AppCompatActivity {
     private static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 0;
 
@@ -147,6 +154,23 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        try {
+            JSONObject location = new JSONObject();
+            location.put("longitude", 10.11);
+            location.put("latitude", 12.14);
+            location.put("measured_at", System.currentTimeMillis());
+            location.put("strategy", 0);
+            location.put("name", "JSON Test");
+
+            JSONObject body = new JSONObject();
+            body.put("location", location);
+
+            //new PushLocation().execute(body.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
 
     }
 
