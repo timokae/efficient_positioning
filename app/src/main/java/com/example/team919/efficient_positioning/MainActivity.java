@@ -8,7 +8,6 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.location.LocationProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -22,16 +21,13 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -59,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     RadioButton radioStill;
 
     Button btnStart;
+    Button btnStop;
     TextView txtLat;
     TextView txtLong;
 
@@ -83,12 +80,13 @@ public class MainActivity extends AppCompatActivity {
         radioMS = findViewById(R.id.radioMS);
         radioStill =findViewById(R.id.radioStill);
         btnStart = findViewById(R.id.btnStart);
+        btnStop = findViewById(R.id.btnStop);
         txtLat = findViewById(R.id.txtLat);
         txtLong = findViewById(R.id.txtLong);
 
 
         if (!fine_location_permitted()) {
-            permit_fine_location(MY_PERMISSIONS_REQUEST_FINE_LOCATION);
+            permit_fine_location();
         }
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -104,15 +102,13 @@ public class MainActivity extends AppCompatActivity {
                 switch (event.sensor.getType()){
                     case Sensor.TYPE_ACCELEROMETER:
 
-                        if (radioStill.isChecked() && Math.abs(event.values[0]) < 1 && Math.abs(event.values[1]) < 1 && Math.abs(event.values[2]) > 8 && flag == true){
+                        if (radioStill.isChecked() && Math.abs(event.values[0]) < 1 && Math.abs(event.values[1]) < 1 && Math.abs(event.values[2]) > 8 && flag){
                             locationManager.removeUpdates(locationListener);
                             flag = false;
-                        }else if(radioStill.isChecked() && Math.abs(event.values[0]) > 1 && Math.abs(event.values[1]) > 1 && Math.abs(event.values[2]) < 8 && flag == false){
-                            Log.d("gdsfzau", String.valueOf(minTime));
+                        }else if(radioStill.isChecked() && Math.abs(event.values[0]) > 1 && Math.abs(event.values[1]) > 1 && Math.abs(event.values[2]) < 8 && !flag){
                             setLocationUpdatesTime(minTime*1000);
                             flag = true;
                         }
-
                 }
             }
 
@@ -157,7 +153,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 if(editMinZeit.getText().toString().trim().length()!=0) minTime = Long.parseLong(editMinZeit.getText().toString());
-
             }
         });
 
@@ -205,7 +200,6 @@ public class MainActivity extends AppCompatActivity {
                         editMS.setEnabled(true);
                         editMinZeit.setEnabled(false);
                         break;
-
                 }
             }
         });
@@ -214,29 +208,28 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(radioMinZeit.isChecked()){
-                    Toast.makeText(context, "", Toast.LENGTH_SHORT).show();
                     setLocationUpdatesTime(minTime*1000);
                 }
                 if(radioDistanz.isChecked()){
-                    Toast.makeText(context, "Hallo Distanz", Toast.LENGTH_SHORT).show();
                     setLocationUpdatesTime(0);
                 }
                 if(radioMS.isChecked()){
                     minTime = (long)(minDistance/meterProSekunde);
                     setLocationUpdatesTime(minTime*1000);
-                    Toast.makeText(context, editMinZeit.getText(), Toast.LENGTH_SHORT).show();
                 }
                 if(radioStill.isChecked()){
                     minTime = (long)(minDistance/meterProSekunde);
-                    Log.d("gdsfzau", String.valueOf(minTime));
                     setLocationUpdatesTime(minTime*1000);
-                    Toast.makeText(context, editMinZeit.getText(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
-
-
+        btnStop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                locationManager.removeUpdates(locationListener);
+            }
+        });
     }
 
     void setLocationUpdatesTime(long minTime){
@@ -249,7 +242,6 @@ public class MainActivity extends AppCompatActivity {
 
     private LocationListener getLocation(){
         // Hier die Anwednung Starten Später noch aus Lagern
-        //Toast.makeText(getApplicationContext(),"Berechtigung erteilt",Toast.LENGTH_LONG).show();
         // LocationListener erstellen
 
         return new LocationListener() {
@@ -268,7 +260,6 @@ public class MainActivity extends AppCompatActivity {
                     doHttpRequest(collectedLocation.getLongitude(), collectedLocation.getLatitude(), collectedLocation.getTime(), 1, editName.getText().toString());
                 }
                 if (radioDistanz.isChecked() && distanceBetweenPoints(collectedLocation.getLatitude(), collectedLocation.getLongitude(), location.getLatitude(), location.getLongitude()) > minDistance){
-                    //Log.d("gdsfzau", "next");
                     collectedLocation = location;
                     doHttpRequest(collectedLocation.getLongitude(), collectedLocation.getLatitude(), collectedLocation.getTime(), 1, editName.getText().toString());
                 }
@@ -278,8 +269,6 @@ public class MainActivity extends AppCompatActivity {
 
                 //1.d still
                 if (radioStill.isChecked())doHttpRequest(location.getLongitude(), location.getLatitude(), location.getTime(), 3, editName.getText().toString());
-
-
             }
 
             @Override
@@ -296,10 +285,7 @@ public class MainActivity extends AppCompatActivity {
             public void onProviderDisabled(String provider) {
 
             }
-
-
         };
-
     }
 
     // Fine Location Permission
@@ -307,8 +293,8 @@ public class MainActivity extends AppCompatActivity {
         return ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
 
-    private void permit_fine_location(int callback) {
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, callback);
+    private void permit_fine_location() {
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MainActivity.MY_PERMISSIONS_REQUEST_FINE_LOCATION);
     }
 
     public void doHttpRequest(double longitude, double latitude, long measured_at, int strategy, String name){
@@ -329,16 +315,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public double distanceBetweenPoints(double startlat,double startlong,double entlat,double entlng) {
+    public double distanceBetweenPoints(double startLat,double startLong,double entLat,double entLng) {
         Location locA = new Location("Point A");
-        locA.setLatitude(startlat);
-        locA.setLongitude(startlong);
+        locA.setLatitude(startLat);
+        locA.setLongitude(startLong);
         Location locB = new Location("Point B");
-        locB.setLatitude(entlat);
-        locB.setLongitude(entlng);
+        locB.setLatitude(entLat);
+        locB.setLongitude(entLng);
 
-        double distance = (double) Math.round(locA.distanceTo(locB));
-        return distance;
+        return (double) Math.round(locA.distanceTo(locB));
     }
 
 }
