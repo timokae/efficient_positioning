@@ -22,9 +22,12 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -54,6 +57,10 @@ public class MainActivity extends AppCompatActivity {
     RadioButton radioMS;
     RadioButton radioStill;
 
+    Button btnStart;
+    TextView txtLat;
+    TextView txtLong;
+
     SensorManager sensorManager;
     boolean flag = true;
 
@@ -73,6 +80,10 @@ public class MainActivity extends AppCompatActivity {
         radioDistanz = findViewById(R.id.radioDistanz);
         radioMS = findViewById(R.id.radioMS);
         radioStill =findViewById(R.id.radioStill);
+        btnStart = findViewById(R.id.btnStart);
+        txtLat = findViewById(R.id.txtLat);
+        txtLong = findViewById(R.id.txtLong);
+
 
         if (!fine_location_permitted()) {
             permit_fine_location(MY_PERMISSIONS_REQUEST_FINE_LOCATION);
@@ -124,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                minDistance = Double.parseDouble(editDistanz.getText().toString());
+                if(editDistanz.getText().toString().trim().length()!=0) minDistance = Double.parseDouble(editDistanz.getText().toString());
             }
         });
 
@@ -143,7 +154,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                minTime = Long.parseLong(editMinZeit.getText().toString());
+                if(editMinZeit.getText().toString().trim().length()!=0) minTime = Long.parseLong(editMinZeit.getText().toString());
+
             }
         });
 
@@ -161,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                meterProSekunde = Double.parseDouble(editMS.getText().toString());
+                if(editMS.getText().toString().trim().length()!=0) meterProSekunde = Double.parseDouble(editMS.getText().toString());
             }
         });
 
@@ -170,30 +182,58 @@ public class MainActivity extends AppCompatActivity {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch(checkedId){
                     case R.id.radioMinZeit:
-                        Toast.makeText(context, "", Toast.LENGTH_SHORT).show();
-                        setLocationUpdatesTime(minTime);
+                        editDistanz.setEnabled(false);
+                        editMS.setEnabled(false);
+                        editMinZeit.setEnabled(true);
                         break;
                     case R.id.radioDistanz:
-                        Toast.makeText(context, "Hallo Distanz", Toast.LENGTH_SHORT).show();
-                        setLocationUpdatesTime(0);
+                        editDistanz.setEnabled(true);
+                        editMS.setEnabled(false);
+                        editMinZeit.setEnabled(false);
                         break;
 
                     case R.id.radioMS:
-                        minTime = (long)(minDistance/meterProSekunde);
-                        setLocationUpdatesTime(minTime*1000);
-                        Toast.makeText(context, editMinZeit.getText(), Toast.LENGTH_SHORT).show();
+                        editDistanz.setEnabled(true);
+                        editMS.setEnabled(true);
+                        editMinZeit.setEnabled(false);
                         break;
 
                     case R.id.radioStill:
-                        minTime = (long)(minDistance/meterProSekunde);
-                        Log.d("gdsfzau", String.valueOf(minTime));
-                        setLocationUpdatesTime(minTime*1000);
-                        Toast.makeText(context, editMinZeit.getText(), Toast.LENGTH_SHORT).show();
+                        editDistanz.setEnabled(true);
+                        editMS.setEnabled(true);
+                        editMinZeit.setEnabled(false);
                         break;
 
                 }
             }
         });
+
+        btnStart.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(radioMinZeit.isChecked()){
+                    Toast.makeText(context, "", Toast.LENGTH_SHORT).show();
+                    setLocationUpdatesTime(minTime*1000);
+                }
+                if(radioDistanz.isChecked()){
+                    Toast.makeText(context, "Hallo Distanz", Toast.LENGTH_SHORT).show();
+                    setLocationUpdatesTime(0);
+                }
+                if(radioMS.isChecked()){
+                    minTime = (long)(minDistance/meterProSekunde);
+                    setLocationUpdatesTime(minTime*1000);
+                    Toast.makeText(context, editMinZeit.getText(), Toast.LENGTH_SHORT).show();
+                }
+                if(radioStill.isChecked()){
+                    minTime = (long)(minDistance/meterProSekunde);
+                    Log.d("gdsfzau", String.valueOf(minTime));
+                    setLocationUpdatesTime(minTime*1000);
+                    Toast.makeText(context, editMinZeit.getText(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+
 
     }
 
@@ -213,6 +253,8 @@ public class MainActivity extends AppCompatActivity {
         return new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
+                txtLat.setText(String.valueOf(location.getLatitude()));
+                txtLong.setText(String.valueOf(location.getLongitude()));
 
                 //1.a periodically
                 if (radioMinZeit.isChecked()) doHttpRequest(location.getLongitude(), location.getLatitude(), location.getTime(), 0, editName.getText().toString());
