@@ -23,30 +23,30 @@
         android:layout_height="18dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
-        android:text="Reportingstrategie"
+        android:text="Lokalisierungs Arten"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editName"
-        tools:text="Reportingstrategie" />
+        tools:text="Lokalisierungs Arten" />
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="minZeit"
+        android:text="Periode (Sekunden)"
         app:layout_constraintStart_toStartOf="@+id/editMinZeit"
         app:layout_constraintTop_toBottomOf="@+id/editDistanz"
-        tools:text="minZeit" />
+        tools:text="Periode (Sekunden)" />
 
     <TextView
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="m/s"
+        android:text="Geschwindigkeit (m/s)"
         app:layout_constraintStart_toStartOf="@+id/editMS"
         app:layout_constraintTop_toBottomOf="@+id/editMinZeit"
-        tools:text="m/s" />
+        tools:text="Geschwindigkeit (m/s)" />
 
     <EditText
         android:id="@+id/editDistanz"
@@ -96,30 +96,32 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="minZeit"
-            tools:text="minZeit" />
+            android:text="Periodisch"
+            tools:text="Periodisch" />
 
         <RadioButton
             android:id="@+id/radioDistanz"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="minDistanz"
-            tools:text="minDistanz" />
+            android:text="Distanz-basiert"
+            tools:text="Distanz-basiert" />
 
         <RadioButton
             android:id="@+id/radioMS"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="m/s" />
+            android:text="Geschwindigkeits-basiert"
+            tools:text="Geschwindigkeits-basiert" />
 
         <RadioButton
             android:id="@+id/radioStill"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="still" />
+            android:text="Sensor-basiert"
+            tools:text="Sensor-basiert" />
     </RadioGroup>
 
     <EditText
