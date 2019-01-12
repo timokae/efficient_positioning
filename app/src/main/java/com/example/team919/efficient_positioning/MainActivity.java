@@ -21,6 +21,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -39,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
     private String locationProvider;
     final Context context = this;
     Location collectedLocation;
+
+    int gpsFixes = 0;
 
     long minTime = 0;
     double minDistance = 0.0;
@@ -255,6 +258,8 @@ public class MainActivity extends AppCompatActivity {
 
 
                 //1.b distance_based
+                gpsFixes++;
+                Log.d("GPS_Fixes", String.valueOf(gpsFixes));
                 if (collectedLocation == null && radioDistanz.isChecked()){
                     collectedLocation = location;
                     doHttpRequest(collectedLocation.getLongitude(), collectedLocation.getLatitude(), collectedLocation.getTime(), 1, editName.getText().toString());
@@ -264,10 +269,10 @@ public class MainActivity extends AppCompatActivity {
                     doHttpRequest(collectedLocation.getLongitude(), collectedLocation.getLatitude(), collectedLocation.getTime(), 1, editName.getText().toString());
                 }
 
-                //1.c geschqwindigkeit
+                //1.c speed_based
                 if (radioMS.isChecked())doHttpRequest(location.getLongitude(), location.getLatitude(), location.getTime(), 2, editName.getText().toString());
 
-                //1.d still
+                //1.d sensor_based
                 if (radioStill.isChecked())doHttpRequest(location.getLongitude(), location.getLatitude(), location.getTime(), 3, editName.getText().toString());
             }
 
